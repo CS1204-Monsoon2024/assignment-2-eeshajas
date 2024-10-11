@@ -1,6 +1,9 @@
-#include <iostream>
-#include <cmath>
+#include <iostream> 
+#include <cmath> 
 #include <vector>
+
+
+
 
 class HashTable {
 private:
@@ -8,7 +11,6 @@ private:
     int capacity;
     float loadfactor = 0.8;
     int numofelements;
-
 
     bool isPrime(int num) {
         if (num <= 1) return false;
@@ -18,7 +20,6 @@ private:
         return true;
     }
 
-    
     int primeafternum(int num) {
         while (!isPrime(num)) {
             num++;
@@ -26,92 +27,82 @@ private:
         return num;
     }
 
-    
     int hashfunction(int key) {
         return key % capacity;
     }
 
-    
     void resizetable() {
         int prev_capacity = capacity;
         capacity = primeafternum(2 * prev_capacity);
         std::vector<int> prev_table = table;
         table = std::vector<int>(capacity, -1);
-        numofelements = 0; 
+        numofelements = 0;
 
-        
         for (int i = 0; i < prev_capacity; i++) {
             if (prev_table[i] != -1) {
-                insert(prev_table[i]);  
+                insert(prev_table[i]);
             }
         }
     }
 
 public:
-    // constructor funtion
     HashTable(int size) {
         capacity = primeafternum(size);
         table = std::vector<int>(capacity, -1);
         numofelements = 0;
     }
 
-    
     void insert(int key) {
         if (numofelements + 1 > loadfactor * capacity) {
-            resizetable();  
+            resizetable();
         }
 
         int index = hashfunction(key);
         int i = 0;
 
-        
         while (i < capacity) {
             int pindex = (index + i * i) % capacity;
-            if (table[pindex] == -1) {  
+            if (table[pindex] == -1) {
                 table[pindex] = key;
                 numofelements++;
                 return;
-            } else if (table[pindex] == key) {  
+            } else if (table[pindex] == key) {
                 std::cout << "Duplicate key insertion not allowed" << std::endl;
                 return;
             }
             i++;
         }
 
-        std::cout << "Max probing limit reached!" << std::endl;  
+        std::cout << "Max probing limit reached!" << std::endl;
     }
 
-    
     int search(int key) {
         int index = hashfunction(key);
         int i = 0;
 
-        
         while (i < capacity) {
             int pindex = (index + i * i) % capacity;
             if (table[pindex] == key) {
-                return pindex;  
+                return pindex;
             } else if (table[pindex] == -1) {
-                return -1;  
+                return -1;
             }
             i++;
         }
 
-        return -1;  
+        return -1;
     }
 
-    
     void remove(int key) {
         int index = search(key);
         if (index == -1) {
             std::cout << "Element not found" << std::endl;
         } else {
-            table[index] = -1;  
+            table[index] = -1;
             numofelements--;
         }
     }
 
-    
     void printTable() {
         for (int i = 0; i < capacity; i++) {
             if (table[i] == -1) {
