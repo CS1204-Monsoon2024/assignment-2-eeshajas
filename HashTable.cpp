@@ -41,7 +41,7 @@ private:
 
         
         for (int i = 0; i < prev_capacity; i++) {
-            if (prev_table[i] != -1 && prev_table[i] != -2) {
+            if (prev_table[i] != -1) {
                 insert(prev_table[i]);  
             }
         }
@@ -67,12 +67,12 @@ public:
         
         while (i < capacity) {
             int pindex = (index + i * i) % capacity;
-            if (table[pindex] == key) {  
-                std::cout << "Duplicate key insertion not allowed" << std::endl;
-                return;
-            } else if (table[pindex] == -1) {  
+            if (table[pindex] == -1) {  
                 table[pindex] = key;
                 numofelements++;
+                return;
+            } else if (table[pindex] == key) {  
+                std::cout << "Duplicate key insertion not allowed" << std::endl;
                 return;
             }
             i++;
@@ -106,7 +106,7 @@ public:
         if (index == -1) {
             std::cout << "Element not found" << std::endl;
         } else {
-            table[index] = -2;  
+            table[index] = -1;  
             numofelements--;
         }
     }
