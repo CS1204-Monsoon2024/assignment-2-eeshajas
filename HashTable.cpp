@@ -1,116 +1,85 @@
 #include <iostream>
-#include <cmath>
 #include <vector>
+#include <list>
 
 class HashTable {
-private:
-    std::vector<int> table;
-    int capacity;
-    const float loadfactor = 0.8;
-    int numofelements;
-    const int DELETED = -2;  // Special marker for deleted elements
-
-    bool isPrime(int num) {
-        if (num <= 1) return false;
-        for (int i = 2; i <= sqrt(num); i++) {
-            if (num % i == 0) return false;
-        }
-        return true;
-    }
-
-    int primeAfterNum(int num) {
-        while (!isPrime(num)) {
-            num++;
-        }
-        return num;
-    }
-
-    int hashFunction(int key) {
-        return key % capacity;
-    }
-
-    void resizeTable() {
-        int prev_capacity = capacity;
-        capacity = primeAfterNum(2 * prev_capacity);
-        std::vector<int> prev_table = table;
-        table = std::vector<int>(capacity, -1);
-        numofelements = 0;
-
-        for (int i = 0; i < prev_capacity; i++) {
-            if (prev_table[i] != -1 && prev_table[i] != DELETED) {
-                insert(prev_table[i]);
-            }
-        }
-    }
-
 public:
-    HashTable(int size) {
-        capacity = primeAfterNum(size);
-        table = std::vector<int>(capacity, -1);
-        numofelements = 0;
-    }
+    HashTable(int size);
+    void insert(int key);
+    bool search(int key);
+    void remove(int key);
+    void display();
 
-    void insert(int key) {
-        if (numofelements >= loadfactor * capacity) {
-            resizeTable();
-        }
+private:
+    static const float loadfactor; // Constant load factor
+    static const int DELETED;       // Special value for deleted entries
+    int size;                       // Size of the hash table
+    std::vector<std::list<int>> table; // Hash table using separate chaining
+    int currentSize;               // Current number of elements
 
-        int index = hashFunction(key);
-        int i = 0;
-
-        while (i < capacity) {
-            int pindex = (index + i * i) % capacity;
-            if (table[pindex] == -1 || table[pindex] == DELETED) {
-                table[pindex] = key;
-                numofelements++;
-                return;
-            } else if (table[pindex] == key) {
-                std::cout << "Duplicate key insertion not allowed" << std::endl;
-                return;
-            }
-            i++;
-        }
-
-        std::cout << "Max probing limit reached!" << std::endl;
-    }
-
-    int search(int key) {
-        int index = hashFunction(key);
-        int i = 0;
-
-        while (i < capacity) {
-            int pindex = (index + i * i) % capacity;
-            if (table[pindex] == key) {
-                return pindex;  // Key found
-            } else if (table[pindex] == -1) {
-                return -1;  // Key not found
-            }
-            i++;
-        }
-
-        return -1;  // Key not found
-    }
-
-    void remove(int key) {
-        int index = search(key);
-        if (index == -1) {
-            std::cout << "Element not found" << std::endl;
-        } else {
-            table[index] = DELETED;  // Mark as deleted
-            numofelements--;
-        }
-    }
-
-    void printTable() {
-        for (int i = 0; i < capacity; i++) {
-            if (table[i] == -1) {
-                std::cout << "- ";
-            } else if (table[i] == DELETED) {
-                std::cout << "D ";  // Indicate deleted
-            } else {
-                std::cout << table[i] << " ";
-            }
-        }
-        std::cout << std::endl;
-    }
+    int hashFunction(int key);
+    void resize();
 };
+
+// Initialize static constants
+const float HashTable::loadfactor = 0.75;
+const int HashTable::DELETED = -1;
+
+HashTable::HashTable(int size) : size(size), currentSize(0) {
+    table.resize(size);
+}
+
+int HashTable::hashFunction(int key) {
+    return key % size;
+}
+
+void HashTable::insert(int key) {
+    if (currentSize >= size * loadfactor) {
+        resize();
+    }
+    int index = hashFunction(key);
+    table[index].push_back(key);
+    currentSize++;
+}
+
+bool HashTable::search(int key) {
+    int index = hashFunction(key);
+    for (int item : table[index]) {
+        if (item == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void HashTable::remove(int key) {
+    int index = hashFunction(key);
+    table[index].remove(key);
+    currentSize--;
+}
+
+void HashTable::display() {
+    for (int i = 0; i < size; i++) {
+        std::cout << i << ": ";
+        for (int item : table[i]) {
+            std::cout << item << " -> ";
+        }
+        std::cout << "nullptr" << std::endl;
+    }
+}
+
+void HashTable::resize() {
+    int newSize = size * 2;
+    std::vector<std::list<int>> newTable(newSize);
+    
+    for (const auto& bucket : table) {
+        for (int key : bucket) {
+            int newIndex = key % newSize;
+            newTable[newIndex].push_back(key);
+        }
+    }
+
+    size = newSize;
+    table = std::move(newTable);
+    currentSize = 0; // Reset current size, will be recalculated during insert
+}
