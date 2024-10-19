@@ -81,7 +81,7 @@ public:
         while (i < capacity) {
             int pindex = (index + i * i) % capacity;
             if (table[pindex] == key) {
-                return pindex;
+                return pindex;  // Key found
             } else if (table[pindex] == -1) {
                 return -1;  // Key not found
             }
