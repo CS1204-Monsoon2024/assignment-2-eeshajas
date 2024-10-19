@@ -8,7 +8,7 @@ private:
     int capacity;
     float loadfactor = 0.8;
     int numofelements;
-    const int DELETED = -2;  
+    int DELETED = -2;  
 
     bool isPrime(int num) {
         if (num <= 1) return false;
