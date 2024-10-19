@@ -13,7 +13,7 @@ private:
         return key % size;
     }
 
-    
+   
     bool isPrime(int n) {
         if (n <= 1) return false;
         for (int i = 2; i <= std::sqrt(n); ++i) {
@@ -56,6 +56,13 @@ public:
 
     
     void insert(int key) {
+        
+        if (search(key) != -1) {
+            std::cout << "Duplicate key insertion is not allowed" << std::endl;
+            return;
+        }
+
+        
         if (count >= size * 0.8) {
             resize();
         }
@@ -63,15 +70,13 @@ public:
         int index = hash(key);
         int i = 0;
 
+        
         while (i < size) {
             int newIndex = (index + i * i) % size;
 
             if (table[newIndex] == -1) { 
                 table[newIndex] = key;
                 count++;
-                return;
-            } else if (table[newIndex] == key) { 
-                std::cout << "Duplicate key insertion is not allowed" << std::endl;
                 return;
             }
 
@@ -81,7 +86,7 @@ public:
         std::cout << "Max probing limit reached!" << std::endl; 
     }
 
-    
+   
     void remove(int key) {
         int index = hash(key);
         int i = 0;
@@ -133,6 +138,6 @@ public:
                 std::cout << table[i] << " ";
             }
         }
-        std::cout << std::endl;
+        std::cout << std::endl; 
     }
 };
