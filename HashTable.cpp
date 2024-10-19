@@ -6,9 +6,9 @@ class HashTable {
 private:
     std::vector<int> table;
     int capacity;
-    float loadfactor = 0.8;
+    const float loadfactor = 0.8;
     int numofelements;
-    int DELETED = -2;  // Special marker for deleted elements
+    const int DELETED = -2;  // Special marker for deleted elements
 
     bool isPrime(int num) {
         if (num <= 1) return false;
@@ -18,20 +18,20 @@ private:
         return true;
     }
 
-    int primeafternum(int num) {
+    int primeAfterNum(int num) {
         while (!isPrime(num)) {
             num++;
         }
         return num;
     }
 
-    int hashfunction(int key) {
+    int hashFunction(int key) {
         return key % capacity;
     }
 
-    void resizetable() {
+    void resizeTable() {
         int prev_capacity = capacity;
-        capacity = primeafternum(2 * prev_capacity);
+        capacity = primeAfterNum(2 * prev_capacity);
         std::vector<int> prev_table = table;
         table = std::vector<int>(capacity, -1);
         numofelements = 0;
@@ -45,17 +45,17 @@ private:
 
 public:
     HashTable(int size) {
-        capacity = primeafternum(size);
+        capacity = primeAfterNum(size);
         table = std::vector<int>(capacity, -1);
         numofelements = 0;
     }
 
     void insert(int key) {
         if (numofelements >= loadfactor * capacity) {
-            resizetable();
+            resizeTable();
         }
 
-        int index = hashfunction(key);
+        int index = hashFunction(key);
         int i = 0;
 
         while (i < capacity) {
@@ -75,7 +75,7 @@ public:
     }
 
     int search(int key) {
-        int index = hashfunction(key);
+        int index = hashFunction(key);
         int i = 0;
 
         while (i < capacity) {
