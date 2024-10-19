@@ -32,21 +32,35 @@ private:
 
     
     void resize() {
-        int newSize = nextPrime(size * 2);
-        std::vector<int> newTable(newSize, -1);
-        int oldSize = size;
-        size = newSize;
-        count = 0; 
+    int newSize = nextPrime(size * 2);
+    std::vector<int> newTable(newSize, -1);
+    int oldSize = size;
+    size = newSize;
+    count = 0; 
 
-        
-        for (int i = 0; i < oldSize; ++i) {
-            if (table[i] != -1) {
-                insert(table[i]); 
+    for (int i = 0; i < oldSize; ++i) {
+        if (table[i] != -1) {
+            
+            int key = table[i];
+            int index = hash(key);
+            int j = 0;
+
+            while (j < size) {
+                int newIndex = (index + j * j) % size;
+
+                if (newTable[newIndex] == -1) {
+                    newTable[newIndex] = key;
+                    count++;
+                    break; 
+                }
+
+                j++;
             }
         }
-
-        table.swap(newTable);
     }
+
+    table.swap(newTable);
+}
 
 public:
     
