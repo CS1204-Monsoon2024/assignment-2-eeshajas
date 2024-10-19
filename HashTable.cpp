@@ -8,7 +8,7 @@ private:
     int capacity;
     float loadfactor = 0.8;
     int numofelements;
-    int DELETED = -2;  
+    int DELETED = -2;  // Special marker for deleted elements
 
     bool isPrime(int num) {
         if (num <= 1) return false;
@@ -83,12 +83,12 @@ public:
             if (table[pindex] == key) {
                 return pindex;
             } else if (table[pindex] == -1) {
-                return -1;  
+                return -1;  // Key not found
             }
             i++;
         }
 
-        return -1;  
+        return -1;  // Key not found
     }
 
     void remove(int key) {
@@ -96,7 +96,7 @@ public:
         if (index == -1) {
             std::cout << "Element not found" << std::endl;
         } else {
-            table[index] = DELETED;  
+            table[index] = DELETED;  // Mark as deleted
             numofelements--;
         }
     }
@@ -106,7 +106,7 @@ public:
             if (table[i] == -1) {
                 std::cout << "- ";
             } else if (table[i] == DELETED) {
-                std::cout << "D ";  
+                std::cout << "D ";  // Indicate deleted
             } else {
                 std::cout << table[i] << " ";
             }
