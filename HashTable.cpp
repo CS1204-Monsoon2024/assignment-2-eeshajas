@@ -1,9 +1,6 @@
-#include <iostream> 
-#include <cmath> 
+#include <iostream>
+#include <cmath>
 #include <vector>
-
-
-
 
 class HashTable {
 private:
@@ -11,6 +8,7 @@ private:
     int capacity;
     float loadfactor = 0.8;
     int numofelements;
+    const int DELETED = -2;  
 
     bool isPrime(int num) {
         if (num <= 1) return false;
@@ -39,7 +37,7 @@ private:
         numofelements = 0;
 
         for (int i = 0; i < prev_capacity; i++) {
-            if (prev_table[i] != -1) {
+            if (prev_table[i] != -1 && prev_table[i] != DELETED) {
                 insert(prev_table[i]);
             }
         }
@@ -53,7 +51,7 @@ public:
     }
 
     void insert(int key) {
-        if (numofelements + 1 > loadfactor * capacity) {
+        if (numofelements >= loadfactor * capacity) {
             resizetable();
         }
 
@@ -62,7 +60,7 @@ public:
 
         while (i < capacity) {
             int pindex = (index + i * i) % capacity;
-            if (table[pindex] == -1) {
+            if (table[pindex] == -1 || table[pindex] == DELETED) {
                 table[pindex] = key;
                 numofelements++;
                 return;
@@ -85,12 +83,12 @@ public:
             if (table[pindex] == key) {
                 return pindex;
             } else if (table[pindex] == -1) {
-                return -1;
+                return -1;  
             }
             i++;
         }
 
-        return -1;
+        return -1;  
     }
 
     void remove(int key) {
@@ -98,7 +96,7 @@ public:
         if (index == -1) {
             std::cout << "Element not found" << std::endl;
         } else {
-            table[index] = -1;
+            table[index] = DELETED;  
             numofelements--;
         }
     }
@@ -107,6 +105,8 @@ public:
         for (int i = 0; i < capacity; i++) {
             if (table[i] == -1) {
                 std::cout << "- ";
+            } else if (table[i] == DELETED) {
+                std::cout << "D ";  
             } else {
                 std::cout << table[i] << " ";
             }
